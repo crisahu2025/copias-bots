@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    // Limpieza de tokens heredados de localStorage
+    localStorage.removeItem('cb_admin_session');
+    localStorage.removeItem('cb_admin_token');
+    if (sessionStorage.getItem('cb_admin_session') !== 'true') {
+      window.location.href = 'login.html';
+    }
+    // Protección contra páginas en caché del navegador (BFCache / Botón Atrás)
+    window.addEventListener('pageshow', function(event) {
+      if (sessionStorage.getItem('cb_admin_session') !== 'true') {
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+  <link rel="icon" type="image/png" href="icons/favicon-32.png">
+  <link rel="manifest" href="manifest.json?v=31" />
+  <meta name="theme-color" content="#0973AD" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Copias Bots" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=33" />
+  
+  <!-- jsPDF para generar PDFs directamente -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body style="padding-top: 56px;">
+  
+  <header class="site-header" id="siteHeader">
+    <nav class="nav-container">
+      <a class="nav-logo" href="index.html">
+        <img src="img/logo.jpg" alt="COPIAS BOTS" class="nav-logo-img" />
+        <div class="logo-text">
+          <span class="logo-title">COPIAS BOTS</span>
+        </div>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="calculadora.html">Presupuesto</a></li>
+        <li><a href="encargar.html">Encargue Online</a></li>
+        <li><a href="estado-pedido.html">Estado de Pedido</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn-cta" href="javascript:void(0)" onclick="doLogout()" style="text-decoration:none;">Cerrar Sesión</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <section class="admin-section">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div id="adminPanel" class="admin-panel">
+        <div class="admin-header" style="margin-bottom: 28px;">
+          <div>
+            <div class="section-label light">Administración</div>
+            <h2 class="section-title light">Panel de <span class="highlight-light">Control</span></h2>
+            <p class="section-sub light" style="margin-bottom:0;">Gestión de pedidos, precios y finanzas en tiempo real.</p>
+          </div>
+        </div>
+    
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchAdminTab('finanzas')">📊 Pedidos y Finanzas</button>
+      <button class="tab-btn" onclick="switchAdminTab('precios')">🏷️ Gestión de Precios</button>
+      <button class="tab-btn" onclick="switchAdminTab('comprobante')">🧾 Crear Comprobante</button>
+      <button class="tab-btn" onclick="switchAdminTab('mensajes')">💬 Consultas (<span id="msgCountBadge">0</span>)</button>
+    </div>
+
+    <!-- TAB FINANZAS -->
+    <div id="tab-finanzas" class="admin-tab-content active">
+      <!-- Selector de Periodo / Mes en Curso -->
+      <div id="monthSelectorContainer">
+        <!-- Inyectado dinámicamente -->
+      </div>
+
+      <div class="admin-stats" id="adminStats">
+        <!-- stats generados -->
+      </div>
+      <div class="table-responsive">
+        <table class="orders-table" id="ordersTable" style="display:none;">
+          <thead>
+            <tr>
+              <th>#</th><th>Fecha</th><th>Nombre</th><th>Celular</th><th>Detalle</th>
+              <th>Total</th><th>Estado</th><th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+      <div class="admin-empty" id="adminEmpty" style="display:none;">
+        <h3>Aún no hay pedidos en este periodo</h3>
+      </div>
+      <div class="admin-loading" id="adminLoading">
+        <div class="spinner"></div><p>Cargando datos...</p>
+      </div>
+
+      <!-- Sección de Historial de Meses Anteriores -->
+      <div id="historialMesesContainer" class="history-months-section" style="display:none;">
+        <!-- Inyectado dinámicamente -->
+      </div>
+    </div>
+
+    <!-- TAB PRECIOS -->
+    <div id="tab-precios" class="admin-tab-content">
+      <div class="admin-actions" style="margin-bottom: 20px; text-align: right;">
+        <button class="btn btn-primary" onclick="agregarNuevoProducto()">➕ Agregar Producto</button>
+        <button class="btn btn-primary" onclick="guardarPreciosAdmin()" id="btn-save-prices">💾 Guardar Cambios</button>
+      </div>
+      <div class="table-responsive">
+        <table class="orders-table" id="pricesTable">
+          <thead>
+            <tr>
+              <th>Detalle</th>
+              <th>Costo ($)</th>
+              <th>Precio Público ($)</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="pricesBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- TAB COMPROBANTE MANUAL -->
+    <div id="tab-comprobante" class="admin-tab-content">
+      <div style="max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <h3 style="margin-top:0; margin-bottom: 20px; font-weight:600;">Generar Comprobante Manual</h3>
+        
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label>Nombre del Cliente (Opcional)</label>
+          <input type="text" id="manual-nombre" placeholder="Ej: Juan Pérez" class="price-input" style="width: 100%; box-sizing: border-box;" />
+        </div>
+        
+        <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="margin:0; font-size:16px;">Ítems del Comprobante</h4>
+          <button class="btn btn-outline" style="padding: 5px 15px; font-size: 14px;" onclick="agregarItemManual()">➕ Agregar Ítem</button>
+        </div>
+
+        <div id="manual-items-container">
+          <!-- Primera fila obligatoria -->
+          <div class="manual-item-row" style="display:flex; gap:10px; margin-bottom:10px; align-items:flex-end;">
+            <div style="flex:1;">
+              <label style="font-size:12px; color:#64748b;">Cant.</label>
+              <input type="number" class="item-cant price-input" style="width:100%; box-sizing:border-box;" value="1" oninput="calcularTotalManual()">
+            </div>
+            <div style="flex:4;">
+              <label style="font-size:12px; color:#64748b;">Descripción</label>
+              <input type="text" class="item-desc price-input" style="width:100%; box-sizing:border-box;" placeholder="Ej: 50 hojas simples">
+            </div>
+            <div style="flex:2;">
+              <label style="font-size:12px; color:#64748b;">Precio Unit. ($)</label>
+              <input type="number" class="item-precio price-input" style="width:100%; box-sizing:border-box;" placeholder="800" oninput="calcularTotalManual()">
+            </div>
+            <div style="flex:0.5;">
+              <button class="btn" style="background:#ef4444; color:#fff; padding:6px; border:none; border-radius:4px;" onclick="removerItemManual(this)">🗑️</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 25px; text-align:right;">
+          <h4 style="margin:0; font-size: 18px;">Total: <span id="manual-total-display">$0</span></h4>
+        </div>
+        
+        <div style="margin-top: 25px;">
+          <button class="btn btn-primary" style="width: 100%;" onclick="generarPDFManual()">📄 Descargar PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB MENSAJES Y CONSULTAS -->
+    <div id="tab-mensajes" class="admin-tab-content">
+      <div id="mensajesAdminContainer">
+        <!-- Renderizado dinámico desde app.js?v=33 -->
+      </div>
+    </div>
+  </div>
+</section>
+
+  <script src="js/config.js?v=33"></script>
+  <script src="js/app.js?v=33"></script>
+  <script src="js/pwa.js"></script>
+  <script>
+    let itemCounter = 1;
+
+    function agregarItemManual() {
+      const container = document.getElementById('manual-items-container');
+      const div = document.createElement('div');
+      div.className = 'manual-item-row';
+      div.style.display = 'flex';
+      div.style.gap = '10px';
+      div.style.marginBottom = '10px';
+      div.style.alignItems = 'flex-end';
+      div.innerHTML = `
+        <div style="flex:1;">
+          <input type="number" class="item-cant price-input" style="width:100%; box-sizing:border-box;" value="1" oninput="calcularTotalManual()">
+        </div>
+        <div style="flex:4;">
+          <input type="text" class="item-desc price-input" style="width:100%; box-sizing:border-box;" placeholder="Descripción">
+        </div>
+        <div style="flex:2;">
+          <input type="number" class="item-precio price-input" style="width:100%; box-sizing:border-box;" placeholder="0" oninput="calcularTotalManual()">
+        </div>
+        <div style="flex:0.5;">
+          <button class="btn" style="background:#ef4444; color:#fff; padding:6px; border:none; border-radius:4px;" onclick="removerItemManual(this)">🗑️</button>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function removerItemManual(btn) {
+      btn.parentElement.parentElement.remove();
+      calcularTotalManual();
+    }
+
+    function calcularTotalManual() {
+      let total = 0;
+      document.querySelectorAll('.manual-item-row').forEach(row => {
+        const cant = parseFloat(row.querySelector('.item-cant').value) || 0;
+        const precio = parseFloat(row.querySelector('.item-precio').value) || 0;
+        total += cant * precio;
+      });
+      document.getElementById('manual-total-display').textContent = formatPeso(total);
+      return total;
+    }
+
+    function generarPDF(pedidoEncoded) {
+      const p = JSON.parse(decodeURIComponent(pedidoEncoded));
+      const parts = (p.fecha || '').split(' ');
+      const detalleStr = `${p.hojas} Impresiones ${p.tipo} (${p.color === 'BN' ? 'B/N' : 'Color'})`;
+      
+      const items = [{ cant: 1, desc: detalleStr, precio: parseInt(p.total) || 0 }];
+      if (p.anillado === 'SI' || p.anillado === 'Si') {
+        items.push({ cant: 1, desc: 'Servicio de Anillado', precio: 0 });
+      }
+      
+      capturarPDF(
+        `Comprobante_${p.num}.pdf`,
+        p.nombre || 'Consumidor Final',
+        items,
+        parseInt(p.total) || 0,
+        p.num || '---',
+        parts[0] || '',
+        parts[1] || ''
+      );
+    }
+
+    function generarPDFManual() {
+      try {
+        const nombre = document.getElementById('manual-nombre').value.trim() || 'Consumidor Final';
+        const totalCalc = calcularTotalManual();
+
+        if (totalCalc === 0) {
+          showToast('Por favor, ingresa al menos un item valido.', 'error');
+          return;
+        }
+
+        const items = [];
+        document.querySelectorAll('.manual-item-row').forEach(row => {
+          const cant = parseFloat(row.querySelector('.item-cant').value) || 0;
+          const desc = row.querySelector('.item-desc').value.trim() || 'Sin descripcion';
+          const precio = parseFloat(row.querySelector('.item-precio').value) || 0;
+          if (cant * precio > 0 || desc !== 'Sin descripcion') {
+            items.push({ cant, desc, precio });
+          }
+        });
+
+        const now = new Date();
+        capturarPDF(
+          `Comprobante_${Date.now()}.pdf`,
+          nombre,
+          items,
+          totalCalc,
+          'MAN-' + Math.floor(Math.random() * 10000),
+          now.toLocaleDateString('es-AR'),
+          now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+        );
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      }
+    }
+
+    // Convierte una imagen a base64 usando un canvas oculto
+    function imgToBase64(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const c = document.createElement('canvas');
+          c.width = img.naturalWidth;
+          c.height = img.naturalHeight;
+          c.getContext('2d').drawImage(img, 0, 0);
+          resolve(c.toDataURL('image/png'));
+        };
+        img.onerror = () => resolve(null);
+        img.src = url + '?t=' + Date.now(); // cache bust
+      });
+    }
+
+    // Genera el PDF dibujandolo directamente con jsPDF (sin html2canvas)
+    async function capturarPDF(filename, clientName, items, totalAmount, numRecibo, fecha, hora) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+      const W = 210, H = 297;
+      const mL = 20, mR = 20;
+      const cW = W - mL - mR;
+      let y = 22;
+
+      // Cargar imagenes
+      let logoB64 = null, qrB64 = null;
+      try {
+        [logoB64, qrB64] = await Promise.all([
+          imgToBase64('img/logo_pdf.png'),
+          imgToBase64('img/qr_copias.png')
+        ]);
+      } catch(e) { /* ignorar si falla */ }
+
+      // ====== CABECERA ======
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(22);
+      doc.setTextColor(9, 115, 173);
+      doc.text('COPIAS BOTS', mL, y);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(100, 116, 139);
+      doc.text('Bolivia 271', mL, y + 7);
+      doc.text('San Nicolas, BA', mL, y + 12);
+      doc.text('Comprobante NO Fiscal', mL, y + 17);
+
+      // COMPROBANTE a la derecha
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.setTextColor(200, 210, 225);
+      doc.text('COMPROBANTE', W - mR, y, { align: 'right' });
+
+      // Logo3.png Horizontal en su proporción nativa (3:1)
+      if (logoB64) {
+        try {
+          const logoW = 54;
+          const logoH = 18.15; // Proporción exacta 3522 x 1184 px
+          doc.addImage(logoB64, 'PNG', W - mR - logoW, y + 4, logoW, logoH);
+        } catch(e) {}
+      }
+
+      y += 28;
+
+      // ====== DATOS CLIENTE / FECHA ======
+      doc.setFontSize(8);
+      doc.setTextColor(9, 115, 173);
+      doc.setFont('helvetica', 'bold');
+      doc.text('FACTURAR A', mL, y);
+
+      doc.setFontSize(12);
+      doc.setTextColor(51, 65, 81);
+      doc.text(clientName, mL, y + 7);
+
+      // Datos fecha a la derecha
+      const col1X = W - mR - 45;
+      const col2X = W - mR;
+      doc.setFontSize(9);
+
+      doc.setTextColor(9, 115, 173);
+      doc.setFont('helvetica', 'bold');
+      doc.text('No de recibo', col1X, y, { align: 'right' });
+      doc.text('Fecha', col1X, y + 7, { align: 'right' });
+      doc.text('Hora', col1X, y + 14, { align: 'right' });
+
+      doc.setTextColor(51, 65, 81);
+      doc.setFont('helvetica', 'normal');
+      doc.text(numRecibo, col2X, y, { align: 'right' });
+      doc.text(fecha, col2X, y + 7, { align: 'right' });
+      doc.text(hora, col2X, y + 14, { align: 'right' });
+
+      y += 28;
+
+      // ====== TABLA - ENCABEZADO ======
+      doc.setFillColor(9, 115, 173);
+      doc.rect(mL, y, cW, 9, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Cant.', mL + 5, y + 6);
+      doc.text('Descripcion', mL + 28, y + 6);
+      doc.text('Precio unit.', W - mR - 38, y + 6, { align: 'right' });
+      doc.text('Importe', W - mR - 5, y + 6, { align: 'right' });
+
+      y += 13;
+
+      // ====== TABLA - FILAS ======
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+
+      items.forEach((item, i) => {
+        if (i % 2 === 0) {
+          doc.setFillColor(248, 250, 252);
+          doc.rect(mL, y - 4, cW, 9, 'F');
+        }
+
+        doc.setTextColor(51, 65, 81);
+        doc.text(String(item.cant), mL + 5, y + 2);
+        doc.text(String(item.desc).substring(0, 50), mL + 28, y + 2);
+        doc.text(formatPeso(item.precio), W - mR - 38, y + 2, { align: 'right' });
+        doc.text(formatPeso(item.cant * item.precio), W - mR - 5, y + 2, { align: 'right' });
+
+        doc.setDrawColor(226, 232, 240);
+        doc.line(mL, y + 5, W - mR, y + 5);
+        y += 9;
+      });
+
+      y += 8;
+
+      // ====== TOTAL ======
+      doc.setDrawColor(226, 232, 240);
+      doc.line(W - mR - 80, y, W - mR, y);
+      y += 8;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.setTextColor(9, 115, 173);
+      doc.text('Total', W - mR - 45, y, { align: 'right' });
+      doc.text(formatPeso(totalAmount), W - mR - 5, y, { align: 'right' });
+
+      // ====== PIE DE PAGINA ======
+      const fY = H - 48;
+
+      // Linea separadora punteada
+      doc.setDrawColor(200, 210, 225);
+      for (let x = mL; x < W - mR; x += 4) {
+        doc.line(x, fY, x + 2, fY);
+      }
+
+      doc.setFontSize(10);
+      doc.setTextColor(9, 115, 173);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Condiciones y forma de pago', mL, fY + 8);
+
+      doc.setTextColor(71, 85, 105);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.text('El pago se realizara en efectivo o transferencia.', mL, fY + 14);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(51, 65, 81);
+      doc.text('Alias:', mL, fY + 22);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      doc.text('copiasbots', mL + 13, fY + 22);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(51, 65, 81);
+      doc.text('WhatsApp:', mL, fY + 28);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(71, 85, 105);
+      doc.text('+54 9 336 4333287', mL + 22, fY + 28);
+
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(100, 116, 139);
+      doc.setFontSize(9);
+      doc.text('Gracias por tu compra!', mL, fY + 36);
+
+      // QR a la derecha del pie
+      if (qrB64) {
+        try { doc.addImage(qrB64, 'PNG', W - mR - 32, fY + 5, 30, 30); } catch(e) {}
+      }
+
+      // Barra de color inferior
+      doc.setFillColor(9, 115, 173);
+      doc.rect(0, H - 3, W / 2, 3, 'F');
+      doc.setFillColor(14, 165, 233);
+      doc.rect(W / 2, H - 3, W / 2, 3, 'F');
+
+      // Guardar
+      doc.save(filename);
+      showToast('PDF Generado correctamente', 'success');
+    }
+  </script>
+  <!-- ===== MODAL DETALLE DE PEDIDO ===== -->
+  <div class="modal-backdrop" id="modalDetalleBackdrop" onclick="cerrarModalDetalle()"></div>
+  <div class="order-detail-modal" id="modalDetallePedido">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <h3 id="modalDetalleNum" style="margin:0; font-size:1.4rem; color:var(--text-1);">Pedido #0000</h3>
+        <span id="modalDetalleBadge" class="badge badge-pending">⏳ En Proceso</span>
+      </div>
+      <button class="modal-close-btn" onclick="cerrarModalDetalle()">✕</button>
+    </div>
+    
+    <div class="modal-body" id="modalDetalleContent">
+      <!-- Se inyecta dinámicamente -->
+    </div>
+    
+    <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:20px; padding-top:16px; border-top:1px solid #e2e8f0; flex-wrap:wrap;">
+      <label style="display:inline-flex; align-items:center; gap:10px; cursor:pointer; font-weight:700; color:var(--text-1);">
+        <input type="checkbox" id="checkListoModal" style="width:20px; height:20px; cursor:pointer;" onchange="toggleEstadoPedidoModal(this.checked)" />
+        <span id="lblListoModal">Marcar como Listo para Retirar ✅</span>
+      </label>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-primary" id="btnNotificarWhatsApp" onclick="notificarClienteWhatsApp()" style="background:#25D366; color:#fff; padding:8px 14px; font-size:13px; border:none; border-radius:6px; font-weight:700; cursor:pointer;">
+          💬 Avisar por WhatsApp
+        </button>
+        <button class="btn-primary" id="btnNotificarEmail" onclick="notificarClienteEmail()" style="background:#0973AD; color:#fff; padding:8px 14px; font-size:13px; border:none; border-radius:6px; font-weight:700; cursor:pointer;">
+          📩 Notificar por Email
+        </button>
+        <button class="btn-outline" onclick="cerrarModalDetalle()" style="padding:8px 14px; font-size:13px;">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a href="https://wa.me/3364333287?text=Buen%20dia%20Copias%20Bots" target="_blank" class="btn-whatsapp-float" aria-label="Contacto por WhatsApp" title="Enviar WhatsApp">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COPIAS BOTS — Fotocopias e Impresiones · San Nicolás de los Arroyos</title>
+  <meta name="description" content="COPIAS BOTS: Fotocopias, impresiones y anillados en San Nicolás de los Arroyos. Presupuestá online o hacé tu encargue en segundos." />
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <link rel="icon" type="image/png" href="icons/favicon-32.png">
+  <link rel="manifest" href="manifest.json?v=31" />
+  <meta name="theme-color" content="#0973AD" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Copias Bots" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=33" />
+</head>
+<body>
+
+
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <nav class="nav-container">
+      <a class="nav-logo" href="index.html">
+        <img src="img/logo.jpg" alt="COPIAS BOTS" class="nav-logo-img" />
+        <div class="logo-text">
+          <span class="logo-title">COPIAS BOTS</span>
+          
+        </div>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Inicio</a></li>
+        <li><a href="calculadora.html">Presupuesto</a></li>
+        <li><a href="encargar.html">Encargue Online</a></li>
+        <li><a href="estado-pedido.html">Estado de Pedido</a></li>
+      </ul>
+      <div class="nav-actions" id="navActions">
+        <a class="btn-cta" href="login.html" style="text-decoration:none;">Iniciar Sesión</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-left">
+      <div class="hero-badge">🖨️ Impresiones en San Nicolás</div>
+      <h1 class="hero-title">
+        Imprimís<br/>
+        <span class="hero-highlight">sin moverte</span><br/>
+        de donde estás
+      </h1>
+      <p class="hero-desc">
+        Subí tu archivo, elegí cómo lo querés y lo tenés listo para retirar en <strong>Bolivia 271</strong>. Rápido, fácil y seguro.
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="encargar.html" style="text-decoration:none; text-align:center;">📦 Hacer Encargue</a>
+        <a class="btn-outline" href="#precios" style="text-decoration:none; text-align:center;">💰 Ver Precios</a>
+      </div>
+      <div class="hero-chips">
+        <span class="chip">✅ Gratis cotizar</span>
+        <span class="chip">🔒 Archivos privados</span>
+        <span class="chip">⚡ Respuesta rápida</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-card floating">
+        <div class="hcard-icon">🖨️</div>
+        <div class="hcard-body">
+          <strong>Simple B&N</strong>
+          <span id="hero-price-sbn">Cargando...</span>
+        </div>
+      </div>
+      <div class="hero-card floating delay-1">
+        <div class="hcard-icon">🎨</div>
+        <div class="hcard-body">
+          <strong>A Color</strong>
+          <span id="hero-price-scol">Cargando...</span>
+        </div>
+      </div>
+      <div class="hero-card floating delay-2">
+        <div class="hcard-icon">📎</div>
+        <div class="hcard-body">
+          <strong>Con Anillado</strong>
+          <span>desde $1.500</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <img src="img/logo.jpg" alt="COPIAS BOTS" class="hero-logo-big" />
+        <div class="hero-ring ring1"></div>
+        <div class="hero-ring ring2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMO FUNCIONA ===== -->
+  <section class="how-section" id="como">
+    <div class="container">
+      <div class="section-label">¿Cómo funciona?</div>
+      <h2 class="section-title">Tres pasos y <span class="highlight">listo</span></h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon">📄</div>
+          <h3>Calculá tu precio</h3>
+          <p>Ingresá la cantidad de páginas y el sistema te muestra el precio al instante, sin sorpresas.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon">📤</div>
+          <h3>Subí el archivo</h3>
+          <p>Envianos tu PDF o documento por la web. Queda guardado en forma privada y segura.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon">🏪</div>
+          <h3>Retirá en local</h3>
+          <p>Te avisamos cuando esté listo. Pasás por Bolivia 271 y te llevás tus impresiones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ===== PRECIOS ===== -->
+  <section class="prices-section" id="precios">
+    <div class="container">
+      <div class="section-label">Precios</div>
+      <h2 class="section-title">Tarifas <span class="highlight">vigentes</span></h2>
+      <p class="section-sub">Los precios se actualizan automáticamente desde nuestra lista. Sin letra chica.</p>
+      <div class="prices-grid">
+        <div class="price-box">
+          <div class="pb-header">
+            <span class="pb-icon">⬛</span>
+            <h3>Blanco y Negro</h3>
+          </div>
+          <div class="pb-body">
+            <div class="pb-row"><span>Simple (una cara)</span><strong id="ptable-sbn">···</strong></div>
+            <div class="pb-row"><span>Doble faz</span><strong id="ptable-dbn">···</strong></div>
+          </div>
+          <div class="pb-footer">Por hoja</div>
+        </div>
+        <div class="price-box featured">
+          <div class="pb-badge">Más pedido</div>
+          <div class="pb-header">
+            <span class="pb-icon">🎨</span>
+            <h3>A Color</h3>
+          </div>
+          <div class="pb-body">
+            <div class="pb-row"><span>Simple (una cara)</span><strong id="ptable-scol">···</strong></div>
+            <div class="pb-row"><span>Doble faz</span><strong id="ptable-dcol">···</strong></div>
+          </div>
+          <div class="pb-footer">Por hoja</div>
+        </div>
+        <div class="price-box">
+          <div class="pb-header">
+            <span class="pb-icon">📎</span>
+            <h3>Anillado</h3>
+          </div>
+          <div class="pb-body small">
+            <div class="pb-row"><span>Hasta 100 págs.</span><strong>$1.500</strong></div>
+            <div class="pb-row"><span>Hasta 150 págs.</span><strong>$2.000</strong></div>
+            <div class="pb-row"><span>Hasta 200 págs.</span><strong>$2.500</strong></div>
+            <div class="pb-row"><span>Hasta 250 págs.</span><strong>$3.000</strong></div>
+            <div class="pb-row"><span>Hasta 300 págs.</span><strong>$3.500</strong></div>
+            <div class="pb-row"><span>Más de 300 págs.</span><strong>$4.000</strong></div>
+          </div>
+          <div class="pb-footer">Por trabajo</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACTO ===== -->
+  <section class="contact-section" id="contacto">
+    <div class="container">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <div class="section-label">Contacto</div>
+          <h2 class="section-title">¿Dónde <span class="highlight">encontrarnos</span>?</h2>
+          <div class="ci-item"><div class="ci-icon">📍</div><div><strong>Dirección</strong><p>Bolivia 271, Barrio Santa Clara<br>San Nicolás de los Arroyos, Buenos Aires</p></div></div>
+          <div class="ci-item"><div class="ci-icon">⏰</div><div><strong>Horario</strong><p>Lunes a Sábados · 8:00 a 20:00 hs</p></div></div>
+          <div class="ci-item"><div class="ci-icon">📱</div><div><strong>Contacto rápido</strong><p>Telegram o WhatsApp para consultas</p></div></div>
+          <div class="contact-btns">
+            <a href="https://t.me/CopiasBoliviaBot" class="btn-tg" id="link-telegram" target="_blank">✈️ Telegram</a>
+            <a href="https://wa.me/3364333287?text=Buen%20dia%20Copias%20Bots" class="btn-wa" id="link-whatsapp" target="_blank">💬 WhatsApp</a>
+          </div>
+        </div>
+        <div class="contact-map">
+          <iframe src="https://maps.google.com/maps?q=Bolivia+271,+San+Nicol%C3%A1s+de+los+Arroyos&output=embed"
+            width="100%" height="100%" style="border:0;border-radius:20px;" allowfullscreen loading="lazy"
+            title="Ubicación COPIAS BOTS"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="img/logo.jpg" alt="COPIAS BOTS" />
+        <span>COPIAS BOTS</span>
+      </div>
+      <p>© 2026 · Bolivia 271, San Nicolás de los Arroyos · Todos los derechos reservados</p>
+      <p class="footer-sec">🔒 Sitio seguro — Tus archivos son privados</p>
+    </div>
+  </footer>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a href="https://wa.me/3364333287?text=Buen%20dia%20Copias%20Bots" target="_blank" class="btn-whatsapp-float" aria-label="Contacto por WhatsApp" title="Enviar WhatsApp">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-box">
+      <div class="spinner-color"></div>
+      <p id="loadingText">Enviando pedido...</p>
+    </div>
+  </div>
+
+  <script src="js/config.js?v=33"></script>
+  <script src="js/app.js?v=33"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
+
+
+
+

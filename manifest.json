@@ -1,0 +1,76 @@
+{
+  "name": "COPIAS BOTS — Fotocopias e Impresiones",
+  "short_name": "Copias Bots",
+  "description": "Fotocopias, impresiones y anillados en San Nicolás de los Arroyos. Presupuestá online o hacé tu encargue en segundos.",
+  "id": "com.copiasbots.app",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0973AD",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities",
+    "shopping"
+  ],
+  "icons": [
+    {
+      "src": "icons/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Hacer Encargue",
+      "short_name": "Encargar",
+      "description": "Subí tu archivo y realizá un pedido de fotocopias",
+      "url": "encargar.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Calculadora de Precios",
+      "short_name": "Presupuesto",
+      "description": "Calculá el costo de tus impresiones al instante",
+      "url": "calculadora.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Estado de Pedido",
+      "short_name": "Mis Pedidos",
+      "description": "Consultá el estado de tu pedido en tiempo real",
+      "url": "estado-pedido.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Panel Dueño / Admin",
+      "short_name": "Admin",
+      "description": "Acceso al panel de control y gestión de pedidos",
+      "url": "login.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

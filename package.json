@@ -1,0 +1,9 @@
+{
+  "name": "copias-bots",
+  "version": "1.0.0",
+  "description": "COPIAS BOTS — Fotocopias e Impresiones · San Nicolás de los Arroyos",
+  "private": true,
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

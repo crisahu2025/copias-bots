@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estado de Pedido | COPIAS BOTS</title>
+  <meta name="description" content="Consultá el estado de tu pedido en COPIAS BOTS ingresando tu número de pedido." />
+  <link rel="icon" type="image/png" href="icons/favicon-32.png">
+  <link rel="manifest" href="manifest.json?v=31" />
+  <meta name="theme-color" content="#0973AD" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Copias Bots" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=33" />
+  <style>
+    .status-search-box {
+      max-width: 650px;
+      margin: 0 auto 30px auto;
+      background: #ffffff;
+      padding: 32px;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+      border: 1px solid #e0f2fe;
+    }
+    .status-input-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .status-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 14px 18px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-align: center;
+      border: 2px solid #bae6fd;
+      border-radius: var(--radius-md);
+      color: #0c4a6e;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .status-input:focus {
+      border-color: #0973AD;
+      box-shadow: 0 0 0 4px rgba(9, 115, 173, 0.15);
+    }
+    .status-result-card {
+      max-width: 750px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+      border: 1px solid #e0f2fe;
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body style="padding-top: 56px;">
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <nav class="nav-container">
+      <a class="nav-logo" href="index.html">
+        <img src="img/logo.jpg" alt="COPIAS BOTS" class="nav-logo-img" />
+        <div class="logo-text">
+          <span class="logo-title">COPIAS BOTS</span>
+        </div>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="calculadora.html">Presupuesto</a></li>
+        <li><a href="encargar.html">Encargue Online</a></li>
+        <li><a href="estado-pedido.html" class="active">Estado de Pedido</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn-cta" href="login.html" style="text-decoration:none;">Iniciar Sesión</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ===== ADMIN SECTION BACKGROUND (IGUAL A TODAS LAS DEMÁS PÁGINAS) ===== -->
+  <section class="admin-section" style="padding: 40px 20px 80px 20px; min-height: calc(100vh - 120px);">
+    <div class="container text-center" style="max-width: 900px; margin: 0 auto;">
+      <div style="margin-bottom: 28px;">
+        <div class="section-label light">Consulta de Trabajos</div>
+        <h2 class="section-title light">¿Cómo va mi <span class="highlight-light">Pedido</span>?</h2>
+        <p class="section-sub light" style="max-width: 650px; margin: 0 auto;">
+          Ingresá tu número de pedido de 6 dígitos (Ej: <strong>100001</strong>) para conocer el estado de tu impresión en tiempo real.
+        </p>
+      </div>
+
+      <div class="status-search-box">
+        <label for="inputOrderNum" style="font-weight: 700; color: #0C4A6E; font-size: 15px;">NÚMERO DE PEDIDO (6 DÍGITOS)</label>
+        <div class="status-input-row">
+          <input type="text" id="inputOrderNum" class="status-input" placeholder="100001" maxlength="10" onkeypress="if(event.key==='Enter') buscarEstadoPedido()" />
+          <button class="btn btn-primary" onclick="buscarEstadoPedido()" style="padding: 14px 28px; font-size: 16px;">🔍 Consultar Estado</button>
+        </div>
+      </div>
+
+      <!-- TARJETA DE RESULTADO -->
+      <div id="orderResultCard" class="status-result-card text-left">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PIE DE PÁGINA ===== -->
+  <footer class="site-footer">
+    <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <h3 style="color: #ffffff; margin-bottom: 6px;">COPIAS BOTS</h3>
+          <p style="color: #94a3b8; font-size: 14px; margin: 0;">Bolivia 271 · San Nicolás de los Arroyos, BA</p>
+        </div>
+        <div>
+          <p style="color: #94a3b8; font-size: 14px; margin: 0;">© 2026 COPIAS BOTS. Todos los derechos reservados.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a href="https://wa.me/3364333287?text=Buen%20dia%20Copias%20Bots" target="_blank" class="btn-whatsapp-float" aria-label="Contacto por WhatsApp" title="Enviar WhatsApp">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <script src="js/config.js?v=33"></script>
+  <script src="js/app.js?v=33"></script>
+  <script src="js/pwa.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const num = params.get('num');
+      if (num) {
+        document.getElementById('inputOrderNum').value = num;
+        buscarEstadoPedido();
+      }
+    });
+
+    async function buscarEstadoPedido() {
+      const numInput = document.getElementById('inputOrderNum');
+      const numVal = (numInput.value || '').trim();
+      const resCard = document.getElementById('orderResultCard');
+
+      if (!numVal) {
+        showToast('Por favor ingresá tu número de pedido (Ej: 100001).', 'warning');
+        numInput.focus();
+        return;
+      }
+
+      showLoading('Consultando estado del pedido...');
+      resCard.style.display = 'none';
+
+      const statusLocal = localStorage.getItem('cb_order_status_' + numVal) || localStorage.getItem('cb_order_status_PED-' + numVal);
+      const isListo = statusLocal === 'LISTO';
+
+      try {
+        let pedidoData = null;
+        if (CONFIG.BACKEND_URL && !CONFIG.BACKEND_URL.includes('TU_URL')) {
+          const url = `${CONFIG.BACKEND_URL}?action=consultarEstado&num=${encodeURIComponent(numVal)}`;
+          const response = await fetch(url, { mode: 'cors' });
+          const data = await response.json();
+          if (data.ok && data.pedido) {
+            pedidoData = data.pedido;
+          }
+        }
+
+        hideLoading();
+
+        if (!pedidoData) {
+          resCard.style.display = 'block';
+          resCard.innerHTML = `
+            <div style="text-align:center; padding: 20px 0;">
+              <div style="font-size: 3.5rem; margin-bottom: 12px;">🔎</div>
+              <h3 style="color:#0C4A6E; margin-bottom: 8px; font-size:1.6rem;">Pedido Nº ${numVal}</h3>
+              <div style="margin-bottom: 20px;">
+                ${isListo ? '<span class="badge-ready" style="font-size:16px; padding:8px 18px;">✅ LISTO PARA RETIRAR</span>' : '<span class="badge-pending" style="font-size:16px; padding:8px 18px;">⏳ EN PROCESO DE IMPRESIÓN</span>'}
+              </div>
+              <p style="color:#475569; font-size:15px; max-width:500px; margin:0 auto 24px auto;">
+                Tu pedido fue registrado en nuestro sistema. Si tenés alguna duda sobre el retiro, podés escribirnos directamente por WhatsApp.
+              </p>
+              <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:18px; border-radius:12px; margin-bottom:24px; text-align:left;">
+                <p style="margin:0 0 6px 0; color:#0369a1; font-weight:700;">📍 Lugar de retiro:</p>
+                <p style="margin:0 0 12px 0; color:#0c4a6e;">Bolivia 271, Barrio Santa Clara · San Nicolás</p>
+                <p style="margin:0 0 6px 0; color:#0369a1; font-weight:700;">⏰ Horarios de atención:</p>
+                <p style="margin:0; color:#0c4a6e;">Lunes a Sábados de 8:00 a 20:00 hs</p>
+              </div>
+              <a href="https://wa.me/3364333287?text=Hola,%20quisiera%20consultar%20por%20mi%20pedido%20Nº%20${numVal}" target="_blank" class="btn btn-primary" style="background:#25D366; text-decoration:none; display:inline-block; font-size:15px;">
+                💬 Consultar por WhatsApp
+              </a>
+            </div>
+          `;
+          return;
+        }
+
+        resCard.style.display = 'block';
+        resCard.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; border-bottom:1px solid #e2e8f0; padding-bottom:16px; margin-bottom:20px;">
+            <div>
+              <h3 style="margin:0; color:#0C4A6E; font-size:1.6rem;">Pedido Nº ${pedidoData.num}</h3>
+              <small style="color:#64748b;">Ingresado el: ${pedidoData.fecha || 'Reciente'}</small>
+            </div>
+            <div>
+              ${isListo ? '<span class="badge-ready" style="font-size:15px; padding:8px 16px;">✅ LISTO PARA RETIRAR</span>' : '<span class="badge-pending" style="font-size:15px; padding:8px 16px;">⏳ EN PROCESO DE IMPRESIÓN</span>'}
+            </div>
+          </div>
+
+          <div class="detail-grid" style="margin-bottom:24px;">
+            <div class="detail-item">
+              <div class="detail-label">👤 Cliente</div>
+              <div class="detail-val">${pedidoData.nombre || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">📄 Páginas / Hojas</div>
+              <div class="detail-val">${pedidoData.hojas || '—'} pag.</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">🖨️ Tipo & Color</div>
+              <div class="detail-val">${pedidoData.tipo || 'Impresión'} · ${pedidoData.color === 'BN' ? 'Blanco y Negro' : 'Color'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">📎 Terminación / Anillado</div>
+              <div class="detail-val">${pedidoData.anillado || 'Sin anillado'}</div>
+            </div>
+            <div class="detail-item full" style="background:#f0f9ff; border-color:#bae6fd;">
+              <div class="detail-label" style="color:#0369a1;">💰 Total del Pedido</div>
+              <div class="detail-val" style="color:#0973AD; font-size:1.3rem;">$${pedidoData.total || 0}</div>
+            </div>
+          </div>
+
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:20px; border-radius:12px; margin-bottom:24px;">
+            <h4 style="margin:0 0 10px 0; color:#0C4A6E; font-size:16px;">📍 Información de Retiro</h4>
+            <p style="margin:0 0 6px 0; color:#334155;"><strong>Dirección:</strong> Bolivia 271, Barrio Santa Clara (San Nicolás de los Arroyos)</p>
+            <p style="margin:0; color:#334155;"><strong>Horarios:</strong> Lunes a Sábados de 8:00 a 20:00 hs</p>
+          </div>
+
+          <div style="text-align:center;">
+            <a href="https://wa.me/3364333287?text=Hola,%20quisiera%20consultar%20por%20mi%20pedido%20Nº%20${pedidoData.num}" target="_blank" class="btn btn-primary" style="background:#25D366; text-decoration:none; display:inline-flex; align-items:center; gap:8px; font-size:15px;">
+              💬 Hablar por WhatsApp
+            </a>
+          </div>
+        `;
+
+      } catch(e) {
+        hideLoading();
+        showToast('Error al consultar el servidor. Intentá de nuevo en unos momentos.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

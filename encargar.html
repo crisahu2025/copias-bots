@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encargar | COPIAS BOTS</title>
+  <link rel="icon" type="image/png" href="icons/favicon-32.png">
+  <link rel="manifest" href="manifest.json?v=31" />
+  <meta name="theme-color" content="#0973AD" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Copias Bots" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=33" />
+  <!-- pdf.js para conteo de paginas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body style="padding-top: 48px;">
+  
+  <header class="site-header" id="siteHeader" >
+    <nav class="nav-container">
+      <a class="nav-logo" href="index.html">
+        <img src="img/logo.jpg" alt="COPIAS BOTS" class="nav-logo-img" />
+        <div class="logo-text">
+          <span class="logo-title">COPIAS BOTS</span>
+          
+        </div>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="calculadora.html">Presupuesto</a></li>
+        <li><a href="encargar.html" class="active">Encargue Online</a></li>
+        <li><a href="estado-pedido.html">Estado de Pedido</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a class="btn-cta" href="login.html" style="text-decoration:none;">Iniciar Sesión</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <section class="order-section" id="encargue">
+    <div class="container">
+      <div class="section-label light">Encargue Online</div>
+      <h2 class="section-title light">Hacé tu pedido <span class="highlight-light">paso a paso</span></h2>
+      <p class="section-sub light">Completá el formulario y te avisamos cuando esté listo.</p>
+
+      <!-- Steps indicator -->
+      <div class="steps-indicator">
+        <div class="si-step active" id="si-1"><span class="si-num">1</span><span class="si-label">Archivo</span></div>
+        <div class="si-line" id="si-line-1"></div>
+        <div class="si-step" id="si-2"><span class="si-num">2</span><span class="si-label">Impresión</span></div>
+        <div class="si-line" id="si-line-2"></div>
+        <div class="si-step" id="si-3"><span class="si-num">3</span><span class="si-label">Tus datos</span></div>
+        <div class="si-line" id="si-line-3"></div>
+        <div class="si-step" id="si-4"><span class="si-num">4</span><span class="si-label">Confirmar</span></div>
+      </div>
+
+      <div class="order-card" id="orderCard">
+
+        <!-- PASO 1: ARCHIVO -->
+        <div class="form-step active" id="step-1">
+          <h3 class="step-title">Primero, envianos tu archivo</h3>
+          <p class="step-sub">Tu archivo viaja cifrado y queda en nuestra carpeta privada de Drive. Nadie más puede accederlo.</p>
+
+          <!-- ZONA DE UPLOAD -->
+          <div id="uploadWrapper">
+            <!-- El input SIEMPRE existe, NUNCA se esconde -->
+            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                   style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;"
+                   onchange="var f=this.files[0]; if(f){ procesarArchivo(f); } this.value='';" />
+
+            <label for="fileInput" class="upload-area" id="uploadArea" style="display: block;"
+                 ondragover="event.preventDefault(); this.classList.add('dragover')"
+                 ondragleave="this.classList.remove('dragover')"
+                 ondrop="event.preventDefault(); this.classList.remove('dragover'); var f=event.dataTransfer.files[0]; if(f) procesarArchivo(f);">
+              <div class="upload-ico">📁</div>
+              <strong>Arrastrá tu archivo o hacé clic</strong>
+              <span>PDF, DOC, DOCX, JPG, PNG &middot; Sin límite de tamaño</span>
+            </label>
+
+            <!-- Preview: se muestra DESPUES de seleccionar -->
+            <div id="filePreview" style="display:none; background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:14px; margin-top:4px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <span style="font-size:28px;">📄</span>
+                <div style="flex:1; min-width:0;">
+                  <strong id="fileName" style="display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></strong>
+                  <small id="fileSize" style="color:#64748b;"></small>
+                  <div id="filePagesCount" style="color:#0ea5e9; font-size:12px; font-weight:600; margin-top:4px;"></div>
+                </div>
+                <button type="button" onclick="removeFile()" style="background:#fee2e2; border:none; border-radius:8px; padding:8px 12px; cursor:pointer; font-size:16px; color:#dc2626;">✕</button>
+              </div>
+              <div style="margin-top:10px; height:6px; background:#e2e8f0; border-radius:99px; overflow:hidden;">
+                <div id="uploadProgressFill" style="height:100%; background:linear-gradient(90deg,#0ea5e9,#8b5cf6); border-radius:99px; width:0%; transition:width 0.3s;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fallback manual de paginas -->
+          <div id="manualPagesGroup" style="display:none; margin-top:16px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
+            <p style="margin:0 0 8px 0; font-size:14px;">El archivo no es un PDF. Ingresá la cantidad de páginas manualmente:</p>
+            <div class="input-row">
+              <span class="input-prefix">📄</span>
+              <input type="number" id="ord-hojas" min="1" max="9999" placeholder="Ej: 50" oninput="actualizarResumen()" />
+            </div>
+          </div>
+          <div class="security-badges">
+            <span>🔒 HTTPS cifrado</span>
+            <span>🗂️ Drive privado</span>
+            <span>🚫 Solo acceso tuyo</span>
+          </div>
+          <div class="step-actions">
+            <button class="btn-primary" onclick="nextStep(1)" id="btn-next-1">Siguiente →</button>
+          </div>
+        </div>
+
+        <!-- PASO 2: IMPRESION -->
+        <div class="form-step" id="step-2">
+          <h3 class="step-title">¿Cómo necesitás tu impresión?</h3>
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap;">
+            <div style="flex:1; min-width:280px;">
+              <div class="form-group">
+                <label>Tipo de Papel <span class="req">*</span></label>
+                <div class="choice-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                  <div class="choice-card selected" id="cc-papel-comun" onclick="selectOption('papel','COMUN','cc-papel-comun')">
+                    <div class="cc-icon">📄</div>
+                    <strong>Común</strong>
+                    <small>75g (Estándar)</small>
+                  </div>
+                  <div class="choice-card" id="cc-papel-grueso" onclick="selectOption('papel','GRUESO','cc-papel-grueso')">
+                    <div class="cc-icon">📜</div>
+                    <strong>Hoja Gruesa</strong>
+                    <small>120g/200g ($150 / $200)</small>
+                  </div>
+                  <div class="choice-card" id="cc-papel-foto" onclick="selectOption('papel','FOTOGRAFICO','cc-papel-foto')">
+                    <div class="cc-icon">🖼️</div>
+                    <strong>Fotográfico</strong>
+                    <small>Brillante ($500 · Solo Simple)</small>
+                  </div>
+                  <div class="choice-card" id="cc-papel-sticker" onclick="selectOption('papel','STICKER','cc-papel-sticker')">
+                    <div class="cc-icon">🏷️</div>
+                    <strong>Sticker</strong>
+                    <small>Autoadhesivo ($800 · Solo Simple)</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Formato de Impresión <span class="req">*</span></label>
+                <div class="choice-grid">
+                  <div class="choice-card" id="cc-simple" onclick="selectOption('tipo','SIMPLE','cc-simple')">
+                    <div class="cc-icon">📄</div>
+                    <strong>Simple Faz</strong>
+                    <small>Una cara</small>
+                  </div>
+                  <div class="choice-card" id="cc-doble" onclick="selectOption('tipo','DOBLE','cc-doble')">
+                    <div class="cc-icon">📖</div>
+                    <strong>Doble Faz</strong>
+                    <small>Ambas caras</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Color <span class="req">*</span></label>
+                <div class="choice-grid">
+                  <div class="choice-card" id="cc-bn" onclick="selectOption('color','BN','cc-bn')">
+                    <div class="cc-icon">⬛</div>
+                    <strong>Blanco y Negro</strong>
+                    <small>Económico</small>
+                  </div>
+                  <div class="choice-card" id="cc-color" onclick="selectOption('color','COLOR','cc-color')">
+                    <div class="cc-icon">🎨</div>
+                    <strong>A Color</strong>
+                    <small>Para imágenes</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Terminación <span class="req">*</span></label>
+                <div class="choice-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                  <div class="choice-card" id="cc-ani-abrochado" onclick="selectOption('anillado','ABROCHADO','cc-ani-abrochado')">
+                    <div class="cc-icon">📎</div>
+                    <strong>Abrochado</strong>
+                    <small>Con broche</small>
+                  </div>
+                  <div class="choice-card" id="cc-ani-si" onclick="selectOption('anillado','ANILLADO','cc-ani-si')">
+                    <div class="cc-icon"><img src="img/resorte.jpg" style="height: 40px; border-radius: 8px; mix-blend-mode: multiply;"></div>
+                    <strong>Anillado</strong>
+                    <small>Con espiral</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Entrega / Envío <span class="req">*</span></label>
+                <div class="choice-grid">
+                  <div class="choice-card selected" id="cc-envio-retiro" onclick="selectOption('envio','RETIRO','cc-envio-retiro')">
+                    <div class="cc-icon">🏪</div>
+                    <strong>Retiro en Local</strong>
+                    <small>Bolivia 271 (Gratis)</small>
+                  </div>
+                  <div class="choice-card" id="cc-envio-domicilio" onclick="selectOption('envio','DOMICILIO','cc-envio-domicilio')">
+                    <div class="cc-icon">🛵</div>
+                    <strong>Envío a Domicilio</strong>
+                    <small>San Nicolás (+$4.000)</small>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="ord-notas">Instrucciones especiales (opcional)</label>
+                <textarea id="ord-notas" rows="3" placeholder="Ej: imprimir solo páginas 3 a 10..."></textarea>
+              </div>
+            </div>
+
+            <!-- PRECIO EN VIVO PANEL -->
+            <div style="flex:0 0 300px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:20px; align-self:flex-start; position:sticky; top:20px;">
+              <h4 style="margin:0 0 15px 0; font-size:16px; color:#334155; font-weight:700;">Subtotal estimado</h4>
+              <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px; color:#64748b;">
+                <span id="live-pages-desc">Hojas: -</span>
+                <span id="live-pages-cost">$0</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px; color:#64748b;">
+                <span id="live-ani-desc">Anillado: -</span>
+                <span id="live-ani-cost">$0</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:14px; color:#64748b; padding-bottom:15px; border-bottom:1px solid #e2e8f0;">
+                <span id="live-envio-desc">Entrega: Retiro local</span>
+                <span id="live-envio-cost">Gratis</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:18px; color:#0ea5e9; font-weight:800;">
+                <span>Total</span>
+                <span id="live-total">$0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button class="btn-outline-dark" onclick="prevStep(2)" id="btn-prev-2">← Anterior</button>
+            <button class="btn-primary" onclick="nextStep(2)" id="btn-next-2">Siguiente →</button>
+          </div>
+        </div>
+
+        <!-- PASO 3: DATOS -->
+        <div class="form-step" id="step-3">
+          <h3 class="step-title">¿A nombre de quién va el pedido?</h3>
+          <div class="form-group">
+            <label for="ord-nombre">Nombre completo <span class="req">*</span></label>
+            <div class="input-row"><span class="input-prefix">👤</span><input type="text" id="ord-nombre" placeholder="Ej: María Pérez" oninput="actualizarResumen()" /></div>
+          </div>
+          <div class="form-group">
+            <label for="ord-cel">Celular <span class="req">*</span></label>
+            <div class="input-row"><span class="input-prefix">📞</span><input type="tel" id="ord-cel" placeholder="Ej: 3364123456" oninput="this.value = this.value.replace(/[^0-9]/g, ''); actualizarResumen();" /></div>
+          </div>
+          <div class="form-group">
+            <label for="ord-email">Email <span class="req">*</span></label>
+            <div class="input-row"><span class="input-prefix">📧</span><input type="email" id="ord-email" placeholder="tu@email.com" required /></div>
+          </div>
+          <div class="step-actions">
+            <button class="btn-outline-dark" onclick="prevStep(3)" id="btn-prev-3">← Anterior</button>
+            <button class="btn-primary" onclick="nextStep(3)" id="btn-next-3">Siguiente →</button>
+          </div>
+        </div>
+
+        <!-- PASO 4: CONFIRMAR -->
+        <div class="form-step" id="step-4">
+          <h3 class="step-title">Revisá tu pedido</h3>
+          <div class="summary-card">
+            <div class="sc-row"><span>📄 Páginas</span><strong id="res-hojas">—</strong></div>
+            <div class="sc-row"><span>📜 Tipo de Papel</span><strong id="res-papel">Común (75g)</strong></div>
+            <div class="sc-row"><span>🖨️ Impresión</span><strong id="res-tipo">—</strong></div>
+            <div class="sc-row"><span>🎨 Color</span><strong id="res-color">—</strong></div>
+            <div class="sc-row"><span>📎 Anillado</span><strong id="res-ani">—</strong></div>
+            <div class="sc-row"><span>🛵 Entrega</span><strong id="res-envio">Retiro en local</strong></div>
+            <div class="sc-row"><span>📝 Notas</span><strong id="res-notas">—</strong></div>
+            <div class="sc-divider"></div>
+            <div class="sc-row"><span>👤 Nombre</span><strong id="res-nombre">—</strong></div>
+            <div class="sc-row"><span>📞 Celular</span><strong id="res-cel">—</strong></div>
+            <div class="sc-row"><span>📁 Archivo</span><strong id="res-archivo">—</strong></div>
+            <div class="sc-divider"></div>
+            <div class="sc-total">
+              <span>💰 TOTAL ESTIMADO</span>
+              <strong id="res-total">—</strong>
+            </div>
+            <p class="sc-note">* El precio puede ajustarse. Te confirmamos antes de imprimir.</p>
+          </div>
+          <label class="check-label" for="ord-terminos">
+            <input type="checkbox" id="ord-terminos" />
+            <span class="check-box"></span>
+            Acepto que mis datos sean usados para procesar este pedido.
+          </label>
+          <div class="step-actions">
+            <button class="btn-outline-dark" onclick="prevStep(4)" id="btn-prev-4">← Anterior</button>
+            <button class="btn-success" onclick="enviarPedido()" id="btn-confirmar">✅ Confirmar Pedido</button>
+          </div>
+        </div>
+
+        <!-- ÉXITO -->
+        <div class="form-step" id="step-success">
+          <div class="success-wrap">
+            <div class="success-ico">🎉</div>
+            <h3>¡Pedido recibido!</h3>
+            <p>Te notificamos cuando esté listo para retirar en <strong>Bolivia 271</strong>.</p>
+            <div class="success-num" id="successInfo"></div>
+            <button class="btn-primary" onclick="resetForm()" id="btn-nuevo">Hacer otro pedido</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- LOADING -->
+  <div class="loading-overlay" id="loadingOverlay" style="display:none">
+    <div class="loading-box">
+      <div class="spinner-color"></div>
+      <p id="loadingText">Enviando pedido...</p>
+    </div>
+  </div>
+
+
+  <!-- Botón flotante de WhatsApp -->
+  <a href="https://wa.me/3364333287?text=Buen%20dia%20Copias%20Bots" target="_blank" class="btn-whatsapp-float" aria-label="Contacto por WhatsApp" title="Enviar WhatsApp">
+    <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <script src="js/config.js?v=33"></script>
+  <script src="js/app.js?v=33"></script>
+  <script src="js/pwa.js"></script>
+</body>
+</html>
