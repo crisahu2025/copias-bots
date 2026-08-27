@@ -147,7 +147,7 @@ function actualizarNavLoginBtn() {
   const isLogged = sessionStorage.getItem('cb_admin_session') === 'true' || !!state.adminLoggedIn;
 
   // Acciones en la barra de escritorio
-  const navActions = document.querySelector('.nav-actions');
+  const navActions = document.querySelector('.nav-actions') || document.getElementById('navActions');
   if (navActions) {
     if (isDashboard) {
       navActions.innerHTML = `<a class="btn-logout-header" href="javascript:void(0)" onclick="doLogout()">🚪 Cerrar Sesión</a>`;
