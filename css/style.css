@@ -183,19 +183,20 @@ input, textarea, button, select { font-family: var(--font); }
   max-width: 1200px; margin: 0 auto;
   height: 56px; padding: 0 20px;
   display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
 }
 .nav-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; text-decoration: none; }
 .nav-logo-img { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; box-shadow: var(--shadow-sm); border: 1.5px solid rgba(9,115,173,0.2); }
 .logo-title { display: block; font-size: 15px; font-weight: 900; color: var(--primary); line-height: 1.2; letter-spacing: -0.01em; }
 .logo-sub   { display: block; font-size: 11px; color: var(--text-3); font-weight: 400; }
 
-.nav-links { display: flex; list-style: none; gap: 8px; margin: 0; align-items: center; }
-.nav-links a { display: block; padding: 8px 14px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; color: var(--text-2); transition: var(--transition); text-decoration: none; }
+.nav-links { display: flex; list-style: none; gap: 8px; margin: 0; align-items: center; flex-shrink: 0; }
+.nav-links a { display: block; padding: 8px 14px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; color: var(--text-2); transition: var(--transition); text-decoration: none; white-space: nowrap; }
 .nav-links a:hover, .nav-links a.active { color: var(--primary); background: var(--primary-dim); }
 
 .nav-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-.nav-drawer-actions { display: none; }
+.nav-drawer-actions { display: none !important; }
 
 .btn-admin-header {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1084,9 +1085,9 @@ textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(67,24,
 }
 
 /* =====================================================
-   MOBILE: 768px — Menú Drawer, Dashboard, Tablas, Hero
+   MOBILE: 860px — Menú Drawer, Dashboard, Tablas, Hero
    ===================================================== */
-@media (max-width: 768px) {
+@media (max-width: 860px) {
 
   /* --- HEADER: limpio con Logo a la izquierda y Hamburguesa a la derecha --- */
   .site-header {

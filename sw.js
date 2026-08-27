@@ -1,8 +1,8 @@
 // ============================================================
-// SERVICE WORKER v10 — COPIAS BOTS PWA
+// SERVICE WORKER v35 — COPIAS BOTS PWA
 // ============================================================
 
-const CACHE_NAME = 'copias-bots-cache-v10';
+const CACHE_NAME = 'copias-bots-cache-v35';
 
 const STATIC_ASSETS = [
   './index.html',
