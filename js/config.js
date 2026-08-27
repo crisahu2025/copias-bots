@@ -4,8 +4,7 @@
 
 const CONFIG = {
   // URL de tu Google Apps Script (la obtenés después de deployar el script v2)
-  // Ejemplo: "https://script.google.com/macros/s/XXXXXXXXXXXXXXXX/exec"
-  BACKEND_URL: "https://script.google.com/macros/s/AKfycbwdg-O4-3vPvWU_1p3L4mEEnBFyqB-jCmO--KOy-x3t8QhtMYj8JMazOfYaERLRI3ZlNQ/exec",
+  BACKEND_URL: "https://script.google.com/macros/s/AKfycbyHdghem8NwEd3okumTSGom8gcxeJfd0QXCucrvPBDesxsLNokreBQKwUSo6YUADAJ0sg/exec",
 
   // Contacto Telegram del negocio (para el botón de la web)
   TELEGRAM_USERNAME: "CopiasBoliviaBot",
