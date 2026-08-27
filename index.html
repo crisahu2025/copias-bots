@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>COPIAS BOTS — Fotocopias e Impresiones · San Nicolás de los Arroyos</title>
+  <script>
+    // Auto-purga de Service Worker y caché obsoleta
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) { reg.update(); }
+      });
+    }
+  </script>
   <meta name="description" content="COPIAS BOTS: Fotocopias, impresiones y anillados en San Nicolás de los Arroyos. Presupuestá online o hacé tu encargue en segundos." />
   
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />

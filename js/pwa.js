@@ -6,6 +6,11 @@ let deferredPrompt = null;
 
 // 1. Registro del Service Worker
 if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('[PWA] Nueva versión activada. Recargando...');
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .then((reg) => {

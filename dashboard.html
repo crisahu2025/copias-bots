@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script>
+    // Auto-purga de Service Worker y caché obsoleta
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) { reg.update(); }
+      });
+    }
+  </script>
+  <script>
     // Limpieza de tokens heredados de localStorage
     localStorage.removeItem('cb_admin_session');
     localStorage.removeItem('cb_admin_token');

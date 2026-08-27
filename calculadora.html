@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Calculadora | COPIAS BOTS</title>
+  <script>
+    // Auto-purga de Service Worker y caché obsoleta
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) { reg.update(); }
+      });
+    }
+  </script>
   <link rel="icon" type="image/png" href="icons/favicon-32.png">
   <link rel="manifest" href="manifest.json?v=35" />
   <meta name="theme-color" content="#0973AD" />

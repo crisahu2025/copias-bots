@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | COPIAS BOTS</title>
   <script>
+    // Auto-purga de Service Worker y caché obsoleta
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) { reg.update(); }
+      });
+    }
+  </script>
+  <script>
     // Limpieza estricta de localStorage para evitar tokens huérfanos o sesiones persistentes
     localStorage.removeItem('cb_admin_session');
     localStorage.removeItem('cb_admin_token');
