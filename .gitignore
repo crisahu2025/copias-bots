@@ -1,3 +1,13 @@
+# Google Apps Script & Backend Server Scripts
+*.gs
+*APPS-SCRIPT*
+*bot_logic*
+*Script*.txt
+CODIGO-GOOGLE-APPS-SCRIPT.js
+Script de las fotocopias.txt
+
+# Deploy & Environment
 .vercel
 node_modules/
 .gemini/
+.env*
